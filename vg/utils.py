@@ -53,7 +53,7 @@ def msg2str(msg, level=2):
     for k in HEADERS:
         for v in msg.get_all(k, []):
             h = make_header(decode_header(v))
-            yield '%s: %s' % (k,v)
+            yield '%s: %s' % (k,h)
     if 0 < level:
         if msg.is_multipart():
             if msg.preamble is not None:
@@ -91,4 +91,4 @@ def cutoff(texts, maxlen):
 
 RMSP = re.compile(r'\s+', re.U)
 def rmsp(s):
-    return RMSP.sub(s, ' ').strip()
+    return RMSP.sub(' ', s).strip()
