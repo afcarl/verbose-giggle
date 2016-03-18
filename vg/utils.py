@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import io
+import re
 import gzip
 from email.header import decode_header
 from email.header import make_header
@@ -84,6 +85,10 @@ def msg2tags(msg):
 def cutoff(texts, maxlen):
     text = ''
     for s in texts:
-        text += s
+        text += s+' '
         if maxlen < len(text): break
     return text[:maxlen]
+
+RMSP = re.compile(r'\s+', re.U)
+def rmsp(s):
+    return RMSP.sub(s, ' ').strip()

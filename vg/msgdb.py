@@ -13,6 +13,7 @@ from utils import html2text
 from utils import msg2str
 from utils import msg2tags
 from utils import cutoff
+from utils import rmsp
 
 
 ##  MessageDB
@@ -59,6 +60,29 @@ class MessageDB:
             self._text.add_tag(recno, tag)
         return recno
 
+    def search_tag(self, tags):
+        result = None
+        for tag in tags:
+            recs = set(self._text.search_tag(tag))
+            if result is None:
+                result = recs
+            else:
+                result.update_intersection(recs)
+        for recno in sorted(result, reverse=True):
+            yield self._text.get_text(recno)
+        return
+    
+    def search_text(self, qs):
+        result = None
+        for q in qs:
+            recs = set(self._text.search_text(q))
+            if result is None:
+                result = recs
+            else:
+                result.update_intersection(recs)
+        for recno in sorted(result, reverse=True):
+            yield self._text.get_text(recno)
+        return
 
 def main(argv):
     import getopt
@@ -101,8 +125,11 @@ def main(argv):
             recno = msgdb.add_file(data)
             print(recno)
         msgdb.close()
-    elif cmd == 'get':
-        pass
+    elif cmd == 'search':
+        msgdb.open()
+        for data in msgdb.search_text(args):
+            print(rmsp(data)[:80])
+        msgdb.close()
     else:
         return usage()
     return 0
